@@ -16,10 +16,10 @@ from typing import Any, Dict, List
 
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_groq import ChatGroq
+from langchain_openai import ChatOpenAI
 from opentelemetry.trace import Status, StatusCode
 
-from src.config import GROQ_API_KEY, GROQ_MODEL
+from src.config import OPENAI_API_KEY, OPENAI_MODEL
 from src.observability.telemetry import get_tracer
 from src.state import AgentState
 
@@ -56,9 +56,9 @@ _HALLUCINATION_PROMPT = ChatPromptTemplate.from_template(
 )
 
 
-def _get_llm() -> ChatGroq:
-    """Instantiate the Groq LLM (extracted for easy test mocking)."""
-    return ChatGroq(api_key=GROQ_API_KEY, model=GROQ_MODEL, temperature=0.3)
+def _get_llm() -> ChatOpenAI:
+    """Instantiate the OpenAI LLM (extracted for easy test mocking)."""
+    return ChatOpenAI(api_key=OPENAI_API_KEY, model=OPENAI_MODEL, temperature=0.3)
 
 
 def _format_doc_context(doc_results: List[Dict[str, Any]]) -> str:

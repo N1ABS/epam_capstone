@@ -14,10 +14,10 @@ import logging
 
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_groq import ChatGroq
+from langchain_openai import ChatOpenAI
 from opentelemetry.trace import Status, StatusCode
 
-from src.config import CONFIDENCE_THRESHOLD, GROQ_API_KEY, GROQ_MODEL
+from src.config import CONFIDENCE_THRESHOLD, OPENAI_API_KEY, OPENAI_MODEL
 from src.observability.telemetry import get_tracer
 from src.rag.vector_store import VectorStore
 from src.state import AgentState
@@ -33,9 +33,9 @@ _REFORMULATE_PROMPT = ChatPromptTemplate.from_template(
 )
 
 
-def _get_llm() -> ChatGroq:
-    """Instantiate the Groq LLM (extracted for easy test mocking)."""
-    return ChatGroq(api_key=GROQ_API_KEY, model=GROQ_MODEL, temperature=0)
+def _get_llm() -> ChatOpenAI:
+    """Instantiate the OpenAI LLM (extracted for easy test mocking)."""
+    return ChatOpenAI(api_key=OPENAI_API_KEY, model=OPENAI_MODEL, temperature=0)
 
 
 def research_agent(state: AgentState) -> AgentState:

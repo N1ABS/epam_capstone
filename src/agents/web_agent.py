@@ -20,11 +20,11 @@ from pathlib import Path
 import nest_asyncio
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_groq import ChatGroq
+from langchain_openai import ChatOpenAI
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from opentelemetry.trace import Status, StatusCode
 
-from src.config import GROQ_API_KEY, GROQ_MODEL, MAX_WEB_RESULTS
+from src.config import OPENAI_API_KEY, OPENAI_MODEL, MAX_WEB_RESULTS
 from src.observability.telemetry import get_tracer
 from src.state import AgentState
 
@@ -42,9 +42,9 @@ _SUMMARISE_PROMPT = ChatPromptTemplate.from_template(
 )
 
 
-def _get_llm() -> ChatGroq:
-    """Instantiate the Groq LLM (extracted for easy test mocking)."""
-    return ChatGroq(api_key=GROQ_API_KEY, model=GROQ_MODEL, temperature=0.2)
+def _get_llm() -> ChatOpenAI:
+    """Instantiate the OpenAI LLM (extracted for easy test mocking)."""
+    return ChatOpenAI(api_key=OPENAI_API_KEY, model=OPENAI_MODEL, temperature=0.2)
 
 
 async def _call_tavily_mcp(query: str) -> str:
