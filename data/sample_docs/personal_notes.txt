@@ -1,0 +1,97 @@
+Personal Research Notes — AI & Software Engineering
+====================================================
+
+Last updated: 2025-05-01
+
+---
+
+## Reading List (completed)
+
+- "Attention Is All You Need" — Vaswani et al. (2017)
+  Key takeaway: the transformer architecture replaces recurrence with
+  self-attention, enabling much better parallelisation and long-range
+  dependency modelling.
+
+- "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks" — Lewis et al. (2020)
+  Key takeaway: combining a dense retriever with a seq2seq model produces
+  answers that are more factual and attributable than pure parametric memory.
+
+- "LangGraph: Building Stateful, Multi-Actor Applications with LLMs" (blog, 2024)
+  Key takeaway: representing agent workflows as directed graphs with shared
+  state solves the coordination problem in multi-agent systems cleanly.
+
+---
+
+## Project Ideas
+
+1. **Document Q&A assistant** — personal Notion / Obsidian vault → RAG chatbot.
+   Status: in progress (this project!).
+
+2. **Code review bot** — static analysis + LLM explanation of issues.
+   Status: backlog.
+
+3. **Meeting summariser** — Whisper transcription + structured summary + action items.
+   Status: backlog.
+
+---
+
+## LLM Provider Notes
+
+Groq:
+  - Free tier: 14 400 requests/day, 30 req/min.
+  - Models: llama-3.3-70b-versatile (best general), mixtral-8x7b (fast).
+  - OpenAI-compatible API — drop-in replacement.
+
+Ollama (local):
+  - Zero cost once models are downloaded.
+  - Privacy: no data leaves the machine.
+  - Best for: development, offline use, sensitive documents.
+  - Run: `ollama serve` then `ollama pull llama3.2`.
+
+Google Gemini:
+  - Very generous free tier (1 500 req/day on 1.5 Flash).
+  - 1M token context window useful for long documents.
+
+---
+
+## Vector Database Comparison
+
+Qdrant:
+  - Self-hosted via Docker: `docker run -p 6333:6333 qdrant/qdrant`.
+  - Hybrid search (dense + sparse) out of the box.
+  - Python client: `pip install qdrant-client`.
+
+ChromaDB:
+  - Simplest to set up (pure Python, in-process).
+  - Good for prototyping; less suited for production at scale.
+
+FAISS:
+  - Pure similarity search, no metadata filtering.
+  - Best when you need billion-scale ANN with minimal overhead.
+
+---
+
+## MCP (Model Context Protocol) Notes
+
+MCP standardises how AI agents connect to external tools and data sources.
+
+Key concepts:
+  - Server: exposes tools and resources via a defined schema.
+  - Client: discovers and calls tools at runtime.
+  - Transport: stdio (subprocess), SSE (HTTP streaming), WebSocket.
+
+Use cases in this project:
+  - Tavily search MCP server provides live web search to the web agent.
+  - The server is spawned as a subprocess (stdio transport) for simplicity.
+
+---
+
+## Embeddings Notes
+
+Sentence Transformers (local, free):
+  - all-MiniLM-L6-v2: 22 MB, 384-dim, good speed/quality balance.
+  - all-mpnet-base-v2: 438 MB, 768-dim, higher quality.
+  - paraphrase-multilingual-MiniLM-L12-v2: multilingual support.
+
+Always normalise embeddings before dot-product similarity (cosine).
+Qdrant normalises automatically when Distance.COSINE is set.

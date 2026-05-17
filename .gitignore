@@ -1,0 +1,106 @@
+# ─── Environment & secrets ────────────────────────────────────────────────────
+.env
+*.env.local
+*.env.*.local
+*.env.*
+
+# ─── Python ───────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+wheels/
+.eggs/
+pip-wheel-metadata/
+share/python-wheels/
+MANIFEST
+
+# ─── Virtual environments ─────────────────────────────────────────────────────
+.venv/
+venv/
+env/
+ENV/
+.python-version
+
+# ─── Testing & coverage ───────────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+*.coveragerc
+.tox/
+.nox/
+
+# ─── Type checkers & linters ──────────────────────────────────────────────────
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.ruff_cache/
+.pytype/
+
+# ─── Jupyter ──────────────────────────────────────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb
+
+# ─── Vector database (Qdrant local storage) ───────────────────────────────────
+qdrant_storage/
+data/qdrant/
+
+# ─── Uploaded / processed documents (keep sample_docs, ignore user uploads) ───
+data/uploads/
+data/processed/
+# Uncomment the line below if you do NOT want to commit sample docs either:
+# data/sample_docs/
+
+# ─── ML model caches ──────────────────────────────────────────────────────────
+# sentence-transformers downloads models here by default
+.cache/
+~/.cache/huggingface/
+models/
+
+# ─── Streamlit ────────────────────────────────────────────────────────────────
+.streamlit/secrets.toml
+
+# ─── LangSmith / LangChain ────────────────────────────────────────────────────
+.langchain/
+
+# ─── OpenTelemetry local spans ────────────────────────────────────────────────
+spans/
+traces/
+
+# ─── Logs ─────────────────────────────────────────────────────────────────────
+*.log
+logs/
+
+# ─── OS artefacts ─────────────────────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ─── IDEs & editors ───────────────────────────────────────────────────────────
+.vscode/settings.json
+.vscode/launch.json
+.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+
+# ─── Docker ───────────────────────────────────────────────────────────────────
+# Keep docker-compose.yml committed; ignore local override files
+docker-compose.override.yml
+docker-compose.local.yml

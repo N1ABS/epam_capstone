@@ -1,0 +1,46 @@
+# ─── Agent orchestration ────────────────────────────────────────────────────
+langgraph>=0.2.0
+langchain-core>=0.3.0
+langchain>=0.3.0
+langchain-community>=0.3.0
+langchain-groq>=0.2.0
+langchain-mcp-adapters>=0.1.0
+
+# ─── MCP protocol ────────────────────────────────────────────────────────────
+mcp>=1.0.0
+
+# ─── LLM providers ───────────────────────────────────────────────────────────
+groq>=0.11.0
+
+# ─── Vector store ────────────────────────────────────────────────────────────
+qdrant-client>=1.9.0
+
+# ─── Embeddings (local, no API key required) ─────────────────────────────────
+sentence-transformers>=3.0.0
+
+# ─── Document processing ─────────────────────────────────────────────────────
+pymupdf4llm>=0.0.17
+pymupdf>=1.24.0
+python-docx>=1.1.0
+
+# ─── Web search ──────────────────────────────────────────────────────────────
+tavily-python>=0.3.0
+
+# ─── UI ──────────────────────────────────────────────────────────────────────
+streamlit>=1.38.0
+
+# ─── Observability ───────────────────────────────────────────────────────────
+langsmith>=0.1.0
+opentelemetry-api>=1.25.0
+opentelemetry-sdk>=1.25.0
+# Optional: install for OTLP export (Jaeger, Tempo, Honeycomb, etc.)
+opentelemetry-exporter-otlp-proto-grpc>=1.25.0
+
+# ─── Utilities ───────────────────────────────────────────────────────────────
+python-dotenv>=1.0.0
+pydantic>=2.7.0
+nest-asyncio>=1.6.0
+
+# ─── Testing ─────────────────────────────────────────────────────────────────
+pytest>=8.0.0
+pytest-asyncio>=0.23.0
