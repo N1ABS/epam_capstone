@@ -7,11 +7,11 @@ first and falling back to live web search when needed.
 User Query
     │
     ▼
-┌──────────────────┐   high confidence   ┌──────────────────────┐
-│  Research Agent  │ ──────────────────► │   Synthesis Agent    │
-│  (RAG / Qdrant)  │                     │  (grounded answer +  │
-└──────────────────┘   low confidence    │   citation check)    │
-         │             ──────────────────► ──────────────────────┘
+┌──────────────────┐   high confidence    ┌──────────────────────┐
+│  Research Agent  │ ──────────────────►  │   Synthesis Agent    │
+│  (RAG / Qdrant)  │                      │  (grounded answer +  │
+└──────────────────┘   low confidence     │   citation check)    │
+         │             ──────────────────►└──────────────────────┘
          │                                        ▲
          ▼                                        │
 ┌──────────────────┐                              │
@@ -27,7 +27,7 @@ User Query
 | Concern | Choice | Rationale |
 |---|---|---|
 | Agent orchestration | **LangGraph** | Typed state graph, native LangSmith tracing, deterministic routing |
-| Primary LLM | **OpenAI-compatible** (`gpt-4o-mini` default) | Configurable via env vars; swap to Groq free tier with one env-var change |
+| Primary LLM | **OpenAI** (`gpt-4o-mini` default) | Configurable via env vars (`OPENAI_API_KEY`, `OPENAI_MODEL`, `OPENAI_BASE_URL`) |
 | Local LLM fallback | **Ollama** (`llama3.2`) | Zero cost, fully offline, no data egress |
 | Vector database | **Qdrant** (Docker) | Hybrid search, local-first, production-grade |
 | Embeddings | **sentence-transformers** `all-MiniLM-L6-v2` | Free, local, CPU-efficient, no API key required |
@@ -93,7 +93,7 @@ epam_capstone/
 - Python 3.11+
 - Docker Desktop (for Qdrant)
 - API keys:
-  - **OpenAI** — https://platform.openai.com/api-keys (paid, or use Groq as a free alternative — see setup)
+  - **OpenAI** — https://platform.openai.com/api-keys
   - **Tavily** — https://app.tavily.com/ (free tier: 100 req/month)
   - **LangSmith** — https://smith.langchain.com/ (optional, for LLM tracing)
 
@@ -108,8 +108,10 @@ git clone <repo-url>
 cd epam_capstone
 python -m venv .venv
 
-# Windows
-.venv\Scripts\activate
+# Windows (PowerShell)
+.  \.venv\Scripts\Activate.ps1
+# If blocked by execution policy, run first:
+# Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 
 # macOS / Linux
 source .venv/bin/activate
@@ -130,11 +132,6 @@ A `.env` file is already provided in the project root with all variables pre-pop
 # OpenAI (default provider)
 OPENAI_API_KEY=sk-...
 OPENAI_MODEL=gpt-4o-mini
-
-# Using Groq as a free OpenAI-compatible alternative:
-# OPENAI_API_KEY=gsk_...             <- your Groq key
-# OPENAI_MODEL=llama-3.3-70b-versatile
-# OPENAI_BASE_URL=https://api.groq.com/openai/v1
 
 # Tavily web search (MCP)
 TAVILY_API_KEY=tvly-...
@@ -234,10 +231,11 @@ LangGraph provides explicit state control through a typed `AgentState` TypedDict
 making data flow between agents transparent and easy to test. CrewAI's role-based
 abstraction is simpler to set up but harder to introspect or extend with custom routing.
 
-### Groq over OpenAI
-Groq's free tier is sufficient for development and demo purposes and is
-~10x cheaper in production. The OpenAI-compatible API means switching providers
-requires changing only the client instantiation.
+### OpenAI (`gpt-4o-mini`) as primary LLM
+`gpt-4o-mini` provides a strong balance of capability, speed, and cost. The provider
+is fully configurable via environment variables (`OPENAI_API_KEY`, `OPENAI_MODEL`,
+`OPENAI_BASE_URL`), so switching to any OpenAI-compatible provider requires no code
+changes.
 
 ### Qdrant over ChromaDB
 Qdrant supports hybrid (dense + sparse) search which improves recall on keyword-heavy

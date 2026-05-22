@@ -43,7 +43,7 @@ Below the threshold the Web Agent runs as a transparent fallback.
 | Decision | Choice | Reason |
 |---|---|---|
 | Agent framework | LangGraph | Typed state graph, native LangSmith tracing, deterministic routing |
-| Primary LLM | Groq `llama-3.3-70b-versatile` | Free tier, 100+ tok/s, OpenAI-compatible API |
+| Primary LLM | OpenAI `gpt-4o-mini` | Configurable via env vars, strong reasoning, pay-per-use |
 | Local LLM fallback | Ollama `llama3.2` | Zero cost, fully offline, no data leaves the machine |
 | Vector database | Qdrant (Docker) | Local-first, hybrid search, production-grade, no cloud dependency |
 | Embeddings | `sentence-transformers/all-MiniLM-L6-v2` | Free, CPU-efficient, runs offline, no API key |
@@ -75,10 +75,10 @@ Below the threshold the Web Agent runs as a transparent fallback.
 
 | Metric | Outcome |
 |---|---|
-| End-to-end latency (doc-only path) | ~2–4 s (Groq free tier) |
+| End-to-end latency (doc-only path) | ~2–4 s |
 | End-to-end latency (web fallback path) | ~5–9 s |
 | Test coverage | 50+ automated tests across 6 modules (positive, negative, adversarial) |
-| External API spend | $0 (Groq free tier + Tavily free tier + local embeddings) |
+| External API spend | OpenAI pay-per-use + $0 (Tavily free tier + local embeddings) |
 | Infrastructure cost | $0 (Qdrant on local Docker) |
 
 **Business value:**  A knowledge worker who spends 30 minutes per day
@@ -98,9 +98,10 @@ solutions from being used with proprietary documents.
 2. **MCP via stdio is simpler than it looks** — spawning the Tavily MCP
    server as a subprocess avoids the need for a separate running service and
    keeps the deployment a single `streamlit run` command.
-3. **Free tiers are sufficient for demos** — Groq's inference speed means
-   the system feels responsive even on the free plan; Tavily's 100 req/month
-   free tier is more than enough for a demo workload.
+3. **LLM provider flexibility** — because all provider configuration is in environment
+   variables (`OPENAI_API_KEY`, `OPENAI_MODEL`, `OPENAI_BASE_URL`), switching between
+   models or providers requires no code changes; the confidence threshold keeps
+   unnecessary web calls — and API spend — to a minimum.
 4. **Hallucination checking adds latency** — the second LLM pass for
    verification adds ~1–2 s; in production this would be made asynchronous
    or replaced with a lighter embedding-similarity check.

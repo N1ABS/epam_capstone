@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import List
 
 import pymupdf4llm
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.document_loaders import (
     TextLoader,
     UnstructuredMarkdownLoader,

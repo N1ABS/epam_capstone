@@ -131,7 +131,7 @@ with st.sidebar:
         "- 🌐 Web Agent — live search via Tavily MCP\n"
         "- 🧩 Synthesis Agent — grounded, cited answers\n\n"
         "**Stack**\n"
-        "LangGraph · Qdrant · Groq · Streamlit"
+        "LangGraph · Qdrant · OpenAI · Streamlit"
     )
 
     if st.button("🗑️ Clear Chat", use_container_width=True):

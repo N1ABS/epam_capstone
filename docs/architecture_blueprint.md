@@ -45,7 +45,7 @@ live web search when local knowledge is insufficient.
 |---|---|
 | **Input** | `AgentState.query` |
 | **Output** | `doc_results`, `confidence`, `use_web` |
-| **Tools** | Qdrant vector store, Groq LLM (query reformulation) |
+| **Tools** | Qdrant vector store, OpenAI LLM gpt-4o-mini (query reformulation) |
 
 **Pipeline:**
 1. Rewrites the user query into a keyword-rich search query using the LLM.
@@ -59,7 +59,7 @@ live web search when local knowledge is insufficient.
 |---|---|
 | **Input** | `AgentState.query`, `AgentState.use_web` |
 | **Output** | `web_results` |
-| **Tools** | Tavily MCP server (stdio subprocess), Groq LLM (summarisation) |
+| **Tools** | Tavily MCP server (stdio subprocess), OpenAI LLM gpt-4o-mini (summarisation) |
 | **Condition** | Runs only when `use_web = True` |
 
 **Pipeline:**
@@ -73,7 +73,7 @@ live web search when local knowledge is insufficient.
 |---|---|
 | **Input** | `AgentState.doc_results`, `AgentState.web_results` |
 | **Output** | `synthesis`, `sources` |
-| **Tools** | Groq LLM (answer generation + hallucination check) |
+| **Tools** | OpenAI LLM gpt-4o-mini (answer generation + hallucination check) |
 
 **Pipeline:**
 1. Formats document and web context into readable blocks.
@@ -117,7 +117,7 @@ User input
     ▼ detect_and_anonymise() — PII flagged; logs use sanitised copy
     │
     ▼ Research Agent
-    │   ├─ Groq LLM: query reformulation
+    │   ├─ OpenAI LLM (gpt-4o-mini): query reformulation
     │   └─ Qdrant: cosine-similarity search → doc_results, confidence
     │
     ├─ confidence ≥ 0.60 ────────────────────────────────────┐
@@ -127,14 +127,14 @@ User input
             ▼                                               │
         Web Agent                                           │
             ├─ Tavily MCP server (stdio)                    │
-            └─ Groq LLM: result summarisation → web_results │
+            └─ OpenAI LLM (gpt-4o-mini): result summarisation → web_results │
                     │                                       │
                     └───────────────────────────────────────┤
                                                             │
                                                             ▼
                                                    Synthesis Agent
-                                                       ├─ Groq LLM: answer generation
-                                                       └─ Groq LLM: hallucination check
+                                                       ├─ OpenAI LLM (gpt-4o-mini): answer generation
+                                                       └─ OpenAI LLM (gpt-4o-mini): hallucination check
                                                                 │
                                                                 ▼
                                                          Final answer + sources
@@ -147,7 +147,7 @@ User input
 | Concern | Technology | Version | Rationale |
 |---|---|---|---|
 | Agent orchestration | LangGraph | ≥0.2 | Typed state graph, MemorySaver checkpointing, LangSmith tracing |
-| Primary LLM | Groq (`llama-3.3-70b-versatile`) | ≥0.11 | Free tier, 100+ tok/s, OpenAI-compatible |
+| Primary LLM | OpenAI (`gpt-4o-mini`) | ≥1.40 | Configurable via env vars, strong reasoning, pay-per-use |
 | Local LLM fallback | Ollama (`llama3.2`) | — | Zero cost, offline, no data egress |
 | Vector database | Qdrant | ≥1.9 | Local Docker, cosine similarity, no cloud dependency |
 | Embeddings | `sentence-transformers/all-MiniLM-L6-v2` | ≥3.0 | CPU-efficient, free, 384-dim, offline |
@@ -289,6 +289,6 @@ streamlit run ui/app.py       # Application
 | LangGraph vs CrewAI | CrewAI | LangGraph gives explicit typed state and testable routing; CrewAI is simpler but harder to introspect |
 | Qdrant vs ChromaDB | ChromaDB | Qdrant supports hybrid search and scales to production; ChromaDB has simpler local setup but no hybrid search |
 | Local embeddings vs OpenAI | OpenAI embeddings | Local is free, private, and fast enough for this corpus size; OpenAI would cost ~$0.0001/1K tokens |
-| Groq vs OpenAI LLM | OpenAI GPT-4o | Groq free tier is sufficient for demos; OpenAI offers stronger reasoning but at cost |
+| gpt-4o-mini vs gpt-4o | OpenAI GPT-4o | gpt-4o-mini offers a strong balance of speed and cost; gpt-4o provides stronger reasoning for complex queries |
 | stdio MCP vs SSE | SSE transport | stdio requires no extra server process; SSE needed for shared/multi-user deployments |
 | MemorySaver vs DB checkpointer | PostgreSQL checkpointer | MemorySaver needs no dependencies; PostgreSQL needed for multi-user production |

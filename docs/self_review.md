@@ -94,7 +94,7 @@ I implemented four distinct security controls in `src/security/`: input validati
 
 **PII detection** (`src/security/pii_detector.py`): User queries may contain personal data (emails, phone numbers, SSNs). The system logs queries for debugging; raw PII in logs is a compliance risk. The PII detector produces a `PIIResult` with both the `original` query (used for processing, so semantics are preserved) and a `sanitised` copy (used for logging). This is a pragmatic design — anonymising the query before the LLM would destroy meaning.
 
-**Rate limiting** (`src/security/rate_limiter.py`): The system uses Groq's free tier (limited tokens per minute) and Tavily's free tier (limited requests per month). An unthrottled UI would let a single user exhaust the monthly quota in minutes. The sliding-window implementation uses a `deque` per `thread_id` protected by a `threading.Lock`, which is correct for Streamlit's multi-threaded execution model.
+**Rate limiting** (`src/security/rate_limiter.py`): The system uses OpenAI's API and Tavily's free tier (limited requests per month). An unthrottled UI would let a single user exhaust the API quota in minutes. The sliding-window implementation uses a `deque` per `thread_id` protected by a `threading.Lock`, which is correct for Streamlit's multi-threaded execution model.
 
 **Authentication** (`src/security/auth.py`): The SHA-256 hash and `hmac.compare_digest` for constant-time comparison are standard practice to prevent timing-based enumeration of valid usernames. The `secrets.token_hex(32)` session token provides 256 bits of entropy. This is disabled by default (`AUTH_ENABLED=false`) to simplify local development.
 
@@ -142,7 +142,7 @@ The first request after startup incurs a ~2–5 second model load. I mitigated t
 All agent tests mock the LLM and vector store rather than running live API calls.
 
 ### Reasoning
-Integration tests that call real APIs are fragile in a CI/CD context: they require secrets, they consume rate-limited quotas, they fail intermittently on network issues, and they are slow. The goal of the test suite is to validate **LLM behaviour and routing logic** — not to test that Groq's API is available.
+Integration tests that call real APIs are fragile in a CI/CD context: they require secrets, they consume rate-limited quotas, they fail intermittently on network issues, and they are slow. The goal of the test suite is to validate **LLM behaviour and routing logic** — not to test that OpenAI's API is available.
 
 LangChain's `FakeListChatModel` returns pre-defined responses, making tests deterministic. For the Research Agent, I mock `VectorStore.similarity_search` to return specific scores, which lets me test the confidence threshold routing precisely:
 
@@ -184,4 +184,7 @@ The test suite does not prove the system works end-to-end with real API keys. A 
 
 3. **MCP is simpler than its reputation suggests.** The `mcp` SDK handles all the protocol framing; implementing `list_tools` and `call_tool` handlers takes fewer than 60 lines of code. The complexity is in the async subprocess bridging, not the protocol itself.
 
-4. **Free tiers are sufficient — with caveats.** Groq's inference speed and Tavily's structured results are genuinely good for a demo. The real constraint is Tavily's 100 req/month free limit, which is why the confidence threshold is a first-class citizen of the architecture: avoiding unnecessary web calls preserves the quota.
+4. **Provider flexibility pays off.** Because all LLM configuration (API key, model,
+   base URL) is in environment variables, switching providers requires zero code
+   changes. The confidence threshold is a first-class citizen of the architecture:
+   avoiding unnecessary web calls reduces both latency and API spend.
